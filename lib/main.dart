@@ -8,17 +8,24 @@ void main() {
   runApp(ExpensesApp());
 }
 
-class ExpensesApp extends StatefulWidget {
+class ExpensesApp extends StatelessWidget {
   ExpensesApp({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() {
-    return _ExpensesAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(primaryColor: Colors.amber),
+      home: MyHomePage(),
+    );
   }
 }
 
-class _ExpensesAppState extends State<ExpensesApp> {
+class MyHomePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _MyHomePageState();
+}
 
+class _MyHomePageState extends State<MyHomePage> {
   void _addNewTransaction(String title, double price, DateTime date) {
     final transaction = Transaction(
         id: DateTime.now().toString(), title: title, price: price, date: date);
@@ -61,37 +68,45 @@ class _ExpensesAppState extends State<ExpensesApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-          primaryColor: Colors.amber
-        ),
-        home: Scaffold(
-          appBar: AppBar(
-            title: Text('Expenses App'),
-            actions: [
-              IconButton(
-                  onPressed: () => _showAddNewTransaction(context),
-                  icon: Icon(Icons.add)),
-            ],
-          ),
-          body: SingleChildScrollView(
-            child: Column(
-              // crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Chart(transactions: _transactions),
-                TransactionList(
-                  transactions: _transactions,
-                  deleteTransaction: _deleteTransaction,
-                ),
-              ],
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
+    final appBar = AppBar(
+      title: Text('Expenses App'),
+      actions: [
+        IconButton(
             onPressed: () => _showAddNewTransaction(context),
-          ),
+            icon: Icon(Icons.add)),
+      ],
+    );
+
+    return Scaffold(
+      appBar: appBar,
+      body: SingleChildScrollView(
+        child: Column(
+          // crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.3,
+                child: Chart(transactions: _transactions)),
+            Container(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.7,
+              child: TransactionList(
+                transactions: _transactions,
+                deleteTransaction: _deleteTransaction,
+              ),
+            ),
+          ],
         ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => _showAddNewTransaction(context),
+      ),
     );
   }
 }
